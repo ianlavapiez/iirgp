@@ -4,7 +4,11 @@ import Layout from "antd/es/layout";
 import Menu from "antd/es/menu";
 import notification from "antd/es/notification";
 import Title from "antd/es/typography/Title";
-import { SettingOutlined, TeamOutlined } from "@ant-design/icons";
+import {
+  InboxOutlined,
+  SettingOutlined,
+  TeamOutlined,
+} from "@ant-design/icons";
 import { fireAlert } from "../../components";
 import {
   HeaderContainer,
@@ -12,6 +16,7 @@ import {
   UserButtonContainer,
 } from "./Admin.styles";
 import Customers from "./components/customers/Customers";
+import Products from "./components/products/Products";
 
 const { Sider } = Layout;
 
@@ -106,9 +111,17 @@ const AdminPage = ({ history, user }) => {
             >
               Customers
             </Menu.Item>
+            <Menu.Item
+              key="products"
+              icon={<InboxOutlined />}
+              onClick={() => setSelectedKey("products")}
+            >
+              Products
+            </Menu.Item>
           </Menu>
         </Sider>
         {selectedKey === "customers" ? <Customers /> : null}
+        {selectedKey === "products" ? <Products /> : null}
       </Layout>
     </LayoutContainer>
   );

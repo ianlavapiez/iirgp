@@ -12,17 +12,17 @@ import Spin from "antd/es/spin";
 import Table from "antd/es/table";
 import Highlighter from "react-highlight-words";
 import {
-  deleteCustomerRestart,
-  deleteCustomerStart,
-  retrieveCustomersStart,
-} from "../../../../../redux/customers/customers.actions";
+  deleteProductRestart,
+  deleteProductStart,
+  retrieveProductsStart,
+} from "../../../../../redux/products/products.actions";
 import {
-  selectAllCustomers,
+  selectAllProducts,
   selectError,
   selectIsActionLoading,
   selectIsLoading,
   selectIsSuccessful,
-} from "../../../../../redux/customers/customers.selectors";
+} from "../../../../../redux/products/products.selectors";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -31,30 +31,30 @@ import {
 } from "@ant-design/icons";
 import { fireAlertWithConfirmation } from "../../../../../components";
 
-export class CustomerTable extends React.Component {
+export class ProductsTable extends React.Component {
   state = {
-    customers: [],
+    products: [],
     searchText: "",
     searchedColumn: "",
   };
 
   componentDidMount() {
-    const { retrieveCustomersStart } = this.props;
+    const { retrieveProductsStart } = this.props;
 
-    retrieveCustomersStart();
+    retrieveProductsStart();
   }
 
   componentDidUpdate(previousProps) {
-    const { deleteCustomerRestart, error, isSuccessful } = this.props;
+    const { deleteProductRestart, error, isSuccessful } = this.props;
 
-    if (this.props.customers !== previousProps.customers) {
+    if (this.props.products !== previousProps.products) {
       this.setState({
-        customers: this.props.customers,
+        products: this.props.products,
       });
     }
 
     if (isSuccessful) {
-      deleteCustomerRestart();
+      deleteProductRestart();
       this.openNotificationSuccess();
     }
 
@@ -67,7 +67,7 @@ export class CustomerTable extends React.Component {
     notification.success({
       message: `Success!`,
       duration: 5,
-      description: "You have successfully managed a customer data!",
+      description: "You have successfully managed a product data!",
       placement: "topRight",
     });
   };
@@ -82,22 +82,22 @@ export class CustomerTable extends React.Component {
   };
 
   updateData = (data) => {
-    const { setIsEdit, setCustomer, setVisible } = this.props;
+    const { setIsEdit, setProduct, setVisible } = this.props;
 
     setIsEdit(true);
-    setCustomer(data);
+    setProduct(data);
     setVisible(true);
   };
 
   deleteData = (data) => {
-    const { deleteCustomerStart } = this.props;
+    const { deleteProductStart } = this.props;
 
     fireAlertWithConfirmation(
-      `Are you sure you want to delete the selected customer? This action can't be UNDONE!`,
-      "The selected customer has been successfully deleted!",
+      `Are you sure you want to delete the selected product? This action can't be UNDONE!`,
+      "The selected product has been successfully deleted!",
       (confirmed) => {
         if (confirmed) {
-          deleteCustomerStart(data);
+          deleteProductStart(data);
         } else {
           return false;
         }
@@ -200,27 +200,39 @@ export class CustomerTable extends React.Component {
   };
 
   render() {
-    const { customers } = this.state;
+    const { products } = this.state;
     const { isActionLoading, isLoading } = this.props;
 
     const columns = [
       {
-        title: "Full Name",
-        dataIndex: "fullName",
-        key: "fullName",
-        ...this.getColumnSearchProps("fullName"),
+        title: "Product Name",
+        dataIndex: "name",
+        key: "name",
+        ...this.getColumnSearchProps("name"),
       },
       {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-        ...this.getColumnSearchProps("address"),
+        title: "Size/Color",
+        dataIndex: "sizeColor",
+        key: "sizeColor",
+        ...this.getColumnSearchProps("sizeColor"),
       },
       {
-        title: "Contact Number",
-        dataIndex: "contactNumber",
-        key: "contactNumber",
-        ...this.getColumnSearchProps("contactNumber"),
+        title: "Stock Number",
+        dataIndex: "stockNumber",
+        key: "stockNumber",
+        ...this.getColumnSearchProps("stockNumber"),
+      },
+      {
+        title: "Current Cost per Unit",
+        dataIndex: "currentCost",
+        key: "currentCost",
+        ...this.getColumnSearchProps("currentCost"),
+      },
+      {
+        title: "Selling Price",
+        dataIndex: "sellingPrice",
+        key: "sellingPrice",
+        ...this.getColumnSearchProps("sellingPrice"),
       },
       {
         title: "Action",
@@ -254,7 +266,7 @@ export class CustomerTable extends React.Component {
           ) : (
             <Table
               columns={columns}
-              dataSource={customers && customers}
+              dataSource={products && products}
               pagination={{ defaultPageSize: 7 }}
             />
           )}
@@ -265,17 +277,17 @@ export class CustomerTable extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  customers: selectAllCustomers,
   error: selectError,
   isActionLoading: selectIsActionLoading,
   isLoading: selectIsLoading,
   isSuccessful: selectIsSuccessful,
+  products: selectAllProducts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  deleteCustomerRestart: () => dispatch(deleteCustomerRestart()),
-  deleteCustomerStart: (data) => dispatch(deleteCustomerStart(data)),
-  retrieveCustomersStart: () => dispatch(retrieveCustomersStart()),
+  deleteProductRestart: () => dispatch(deleteProductRestart()),
+  deleteProductStart: (data) => dispatch(deleteProductStart(data)),
+  retrieveProductsStart: () => dispatch(retrieveProductsStart()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomerTable);
+export default connect(mapStateToProps, mapDispatchToProps)(ProductsTable);
