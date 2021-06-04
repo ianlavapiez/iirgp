@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import GlobalStyle from "./global.styles";
 import { Spinner } from "./components";
 import { LoginPage } from "./pages/auth";
+const AdminPage = React.lazy(() => import("./pages/admin"));
 const FourOFourPage = React.lazy(() => import("./pages/404"));
 
 const App = () => {
@@ -13,6 +14,7 @@ const App = () => {
         <Switch>
           <Route component={LoginPage} exact path="/" />
           <Route exact path="/login" render={() => <Redirect to="/" />} />
+          <Route component={AdminPage} exact path="/admin" />
           <Route component={FourOFourPage} />
         </Switch>
       </Suspense>

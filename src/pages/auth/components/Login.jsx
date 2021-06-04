@@ -52,9 +52,9 @@ const Login = ({
         userRestart();
 
         return history.push({
-          pathname: "/voting",
+          pathname: "/admin",
           state: {
-            user: "student",
+            user: "admin",
           },
         });
       }

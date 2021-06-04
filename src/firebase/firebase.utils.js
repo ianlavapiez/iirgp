@@ -4,13 +4,13 @@ import "firebase/auth";
 import "firebase/storage";
 
 const config = {
-  apiKey: "AIzaSyB31t71yDaOfOF8zRP9MoRw0xgclC5bI2Q",
-  authDomain: "phinmaui-elections.firebaseapp.com",
-  projectId: "phinmaui-elections",
-  storageBucket: "phinmaui-elections.appspot.com",
-  messagingSenderId: "543532472513",
-  appId: "1:543532472513:web:fd4387635c586d73839c40",
-  measurementId: "G-L7MPYD5YG5",
+  apiKey: "AIzaSyDHuDxSdAjxRAfJ4ptl54AXIV_Jr-6zmCQ",
+  authDomain: "iirgp-87da1.firebaseapp.com",
+  projectId: "iirgp-87da1",
+  storageBucket: "iirgp-87da1.appspot.com",
+  messagingSenderId: "273626642450",
+  appId: "1:273626642450:web:9c2b9f5fcc4413d7fe00cb",
+  measurementId: "G-X6MJMEHM36",
 };
 
 firebase.initializeApp(config);
