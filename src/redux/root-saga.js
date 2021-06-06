@@ -2,6 +2,7 @@ import { all, call } from "redux-saga/effects";
 import { customersSaga } from "./customers/customers.sagas";
 import { productsSaga } from "./products/products.sagas";
 import { stockInsSaga } from "./stocks-in/stocks-in.sagas";
+import { stockOutsSaga } from "./stocks-out/stocks-out.sagas";
 import { userSaga } from "./user/user.sagas";
 
 export default function* rootSaga() {
@@ -9,6 +10,7 @@ export default function* rootSaga() {
     call(customersSaga),
     call(productsSaga),
     call(stockInsSaga),
+    call(stockOutsSaga),
     call(userSaga),
   ]);
 }

@@ -35,7 +35,6 @@ const stockInsReducer = (state = INITIAL_STATE, action) => {
     case StockInsActionsTypes.ADD_STOCK_IN_SUCCESS:
     case StockInsActionsTypes.DELETE_STOCK_IN_SUCCESS:
     case StockInsActionsTypes.UPDATE_STOCK_IN_SUCCESS:
-    case StockInsActionsTypes.SUBMIT_VOTES_SUCCESS:
       return {
         ...state,
         actionLoading: false,

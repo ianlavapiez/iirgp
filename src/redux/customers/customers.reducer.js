@@ -35,7 +35,6 @@ const customersReducer = (state = INITIAL_STATE, action) => {
     case CustomersActionsTypes.ADD_CUSTOMER_SUCCESS:
     case CustomersActionsTypes.DELETE_CUSTOMER_SUCCESS:
     case CustomersActionsTypes.UPDATE_CUSTOMER_SUCCESS:
-    case CustomersActionsTypes.SUBMIT_VOTES_SUCCESS:
       return {
         ...state,
         actionLoading: false,
