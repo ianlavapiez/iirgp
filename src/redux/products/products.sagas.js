@@ -24,6 +24,7 @@ function* addProduct({
       currentCost,
       id,
       name,
+      quantity: 0,
       sellingPrice,
       sizeColor,
       stockNumber,

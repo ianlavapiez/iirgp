@@ -5,9 +5,11 @@ import Menu from "antd/es/menu";
 import notification from "antd/es/notification";
 import Title from "antd/es/typography/Title";
 import {
+  DownOutlined,
   InboxOutlined,
   SettingOutlined,
   TeamOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
 import { fireAlert } from "../../components";
 import {
@@ -117,6 +119,20 @@ const AdminPage = ({ history, user }) => {
               onClick={() => setSelectedKey("products")}
             >
               Products
+            </Menu.Item>
+            <Menu.Item
+              key="stocksIn"
+              icon={<DownOutlined />}
+              onClick={() => setSelectedKey("stocksIn")}
+            >
+              Stock In
+            </Menu.Item>
+            <Menu.Item
+              key="stocksOut"
+              icon={<UpOutlined />}
+              onClick={() => setSelectedKey("stocksOut")}
+            >
+              Stock Out
             </Menu.Item>
           </Menu>
         </Sider>
