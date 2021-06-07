@@ -19,6 +19,7 @@ import {
 } from "./Admin.styles";
 import Customers from "./components/customers/Customers";
 import Products from "./components/products/Products";
+import StocksIn from "./components/stocks-in/StocksIn";
 
 const { Sider } = Layout;
 
@@ -138,6 +139,7 @@ const AdminPage = ({ history, user }) => {
         </Sider>
         {selectedKey === "customers" ? <Customers /> : null}
         {selectedKey === "products" ? <Products /> : null}
+        {selectedKey === "stocksIn" ? <StocksIn /> : null}
       </Layout>
     </LayoutContainer>
   );

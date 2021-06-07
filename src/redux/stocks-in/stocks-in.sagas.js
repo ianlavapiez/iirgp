@@ -14,20 +14,18 @@ import {
 } from "./stocks-in.actions";
 
 function* addStockIn({
-  payload: { currentCost, name, sellingPrice, sizeColor, stockNumber },
+  payload: { date, month, quantity, selectedProduct, year },
 }) {
   try {
     const id = uuidv4();
     const reference = yield firestore.collection("stocksIn").doc(id);
 
     yield reference.set({
-      currentCost,
-      id,
-      name,
-      quantity: 0,
-      sellingPrice,
-      sizeColor,
-      stockNumber,
+      date,
+      month,
+      quantity,
+      selectedProduct,
+      year,
     });
 
     yield retrieveStockIns();
@@ -76,18 +74,18 @@ function* retrieveStockIns() {
 }
 
 function* updateStockIn({
-  payload: { currentCost, id, name, sellingPrice, sizeColor, stockNumber },
+  payload: { date, id, month, quantity, selectedProduct, year },
 }) {
   try {
     const reference = yield firestore.collection("stocksIn").doc(id);
 
     yield reference.update({
-      currentCost,
+      date,
       id,
-      name,
-      sellingPrice,
-      sizeColor,
-      stockNumber,
+      month,
+      quantity,
+      selectedProduct,
+      year,
     });
     yield retrieveStockIns();
     yield put(updateStockInSuccess());

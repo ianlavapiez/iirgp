@@ -1,63 +1,72 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import moment from "moment";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import Button from "antd/es/button";
+import DatePicker from "antd/es/date-picker";
 import Form from "antd/es/form";
 import Input from "antd/es/input";
 import Modal from "antd/es/modal";
+import Select from "antd/es/select";
 import {
-  addProductRestart,
-  addProductStart,
-  updateProductRestart,
-  updateProductStart,
-} from "../../../../../redux/products/products.actions";
+  addStockInRestart,
+  addStockInStart,
+  updateStockInRestart,
+  updateStockInStart,
+} from "../../../../../redux/stocks-in/stocks-in.actions";
 import {
   selectIsActionLoading,
   selectIsSuccessful,
-} from "../../../../../redux/products/products.selectors";
+} from "../../../../../redux/stocks-in/stocks-in.selectors";
+import { selectAllProducts } from "../../../../../redux/products/products.selectors";
 import { fireAlert } from "../../../../../components";
 
+const { Option } = Select;
+
 const StocksInModal = ({
-  addProductRestart,
-  addProductStart,
-  product,
+  addStockInRestart,
+  addStockInStart,
   error,
   isActionLoading,
   isEdit,
   isSuccessful,
-  updateProductRestart,
-  updateProductStart,
+  products,
+  stocksIn,
+  updateStockInRestart,
+  updateStockInStart,
   visible,
   setIsEdit,
   setVisible,
 }) => {
+  const [date, setDate] = useState("");
+  const [month, setMonth] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState([]);
+  const [year, setYear] = useState("");
+
   const onFinish = (values) => {
-    const { currentCost, name, sellingPrice, sizeColor, stockNumber } = values;
+    const { quantity } = values;
     const id = document.querySelector(".id").value;
 
-    if (parseInt(currentCost) >= parseInt(sellingPrice)) {
-      return fireAlert(
-        "Current Cost per Unit should not be greater than or equal to Selling Price.",
-        "warning"
-      );
+    if (parseInt(quantity) <= 0) {
+      return fireAlert("Quantity should not be 0.", "warning");
     }
 
     if (!isEdit) {
-      addProductStart({
-        currentCost,
-        name,
-        sellingPrice,
-        sizeColor,
-        stockNumber,
+      addStockInStart({
+        date,
+        month,
+        quantity,
+        selectedProduct,
+        year,
       });
     } else {
-      updateProductStart({
-        currentCost,
+      updateStockInStart({
+        date,
         id,
-        name,
-        sellingPrice,
-        sizeColor,
-        stockNumber,
+        month,
+        quantity,
+        selectedProduct,
+        year,
       });
     }
   };
@@ -71,8 +80,8 @@ const StocksInModal = ({
     if (isSuccessful) {
       setVisible(false);
       setIsEdit(false);
-      addProductRestart();
-      return updateProductRestart();
+      addStockInRestart();
+      return updateStockInRestart();
     } else {
       if (error !== null) {
         setVisible(false);
@@ -80,10 +89,10 @@ const StocksInModal = ({
       }
     }
   }, [
-    addProductRestart,
+    addStockInRestart,
     error,
     isSuccessful,
-    updateProductRestart,
+    updateStockInRestart,
     setIsEdit,
     setVisible,
   ]);
@@ -93,11 +102,18 @@ const StocksInModal = ({
     wrapperCol: { span: 24 },
   };
 
+  const onDateChange = (value, dateString) => {
+    setYear(moment(value).year().toString());
+    setMonth(moment(value).month().toString());
+    setDate(dateString);
+  };
+  const onProductChange = (value) => setSelectedProduct(value);
+
   return (
     <Modal
       destroyOnClose
       footer={null}
-      title="Manage Product Details"
+      title="Manage Stock In Details"
       visible={visible}
       onCancel={handleCancel}
     >
@@ -105,7 +121,7 @@ const StocksInModal = ({
         <Input
           type="hidden"
           readOnly
-          value={isEdit ? product.id : ""}
+          value={isEdit ? stocksIn.id : ""}
           name="id"
           className="id"
         />
@@ -115,61 +131,42 @@ const StocksInModal = ({
           rules={[
             {
               required: true,
-              message: "Please input product name!",
+              message: "Please select product!",
             },
           ]}
-          initialValue={isEdit ? product.name : ""}
+          initialValue={isEdit ? stocksIn.name : ""}
         >
-          <Input />
+          <Select placeholder="Select a product" onChange={onProductChange}>
+            {products.map((product) => (
+              <Option key={product.id} value={product.name}>
+                {product.name}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item
-          label="Size/Color"
-          name="sizeColor"
-          rules={[
-            {
-              required: false,
-            },
-          ]}
-          initialValue={isEdit ? product.sizeColor : ""}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Stock Number"
-          name="stockNumber"
+          label="Stock In Date"
+          name="date"
           rules={[
             {
               required: true,
-              message: "Please input stock number!",
+              message: "Please input date!",
             },
           ]}
-          initialValue={isEdit ? product.stockNumber : ""}
+          initialValue={isEdit ? moment(stocksIn.date) : ""}
         >
-          <Input />
+          <DatePicker style={{ width: "100%" }} onChange={onDateChange} />
         </Form.Item>
         <Form.Item
-          label="Current Cost per Unit"
-          name="currentCost"
+          label="Quantity"
+          name="quantity"
           rules={[
             {
               required: true,
-              message: "Please input current cost per unit!",
+              message: "Please input quantity!",
             },
           ]}
-          initialValue={isEdit ? product.currentCost : ""}
-        >
-          <Input type="number" />
-        </Form.Item>
-        <Form.Item
-          label="Selling Price"
-          name="sellingPrice"
-          rules={[
-            {
-              required: true,
-              message: "Please input selling price!",
-            },
-          ]}
-          initialValue={isEdit ? product.sellingPrice : ""}
+          initialValue={isEdit ? stocksIn.quantity : ""}
         >
           <Input type="number" />
         </Form.Item>
@@ -183,7 +180,7 @@ const StocksInModal = ({
             type="primary"
             htmlType="submit"
           >
-            {isEdit ? "Update Product" : "Add Product"}
+            {isEdit ? "Update Stock In" : "Add Stock In"}
           </Button>
         </Form.Item>
       </Form>
@@ -194,13 +191,14 @@ const StocksInModal = ({
 const mapStateToProps = createStructuredSelector({
   isActionLoading: selectIsActionLoading,
   isSuccessful: selectIsSuccessful,
+  products: selectAllProducts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addProductRestart: () => dispatch(addProductRestart()),
-  addProductStart: (data) => dispatch(addProductStart(data)),
-  updateProductRestart: () => dispatch(updateProductRestart()),
-  updateProductStart: (data) => dispatch(updateProductStart(data)),
+  addStockInRestart: () => dispatch(addStockInRestart()),
+  addStockInStart: (data) => dispatch(addStockInStart(data)),
+  updateStockInRestart: () => dispatch(updateStockInRestart()),
+  updateStockInStart: (data) => dispatch(updateStockInStart(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StocksInModal);

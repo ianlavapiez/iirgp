@@ -12,17 +12,17 @@ import Spin from "antd/es/spin";
 import Table from "antd/es/table";
 import Highlighter from "react-highlight-words";
 import {
-  deleteProductRestart,
-  deleteProductStart,
-  retrieveProductsStart,
-} from "../../../../../redux/products/products.actions";
+  deleteStockInRestart,
+  deleteStockInStart,
+  retrieveStockInsStart,
+} from "../../../../../redux/stocks-in/stocks-in.actions";
 import {
-  selectAllProducts,
+  selectAllStockIns,
   selectError,
   selectIsActionLoading,
   selectIsLoading,
   selectIsSuccessful,
-} from "../../../../../redux/products/products.selectors";
+} from "../../../../../redux/stocks-in/stocks-in.selectors";
 import {
   DeleteOutlined,
   EditOutlined,
@@ -31,30 +31,30 @@ import {
 } from "@ant-design/icons";
 import { fireAlertWithConfirmation } from "../../../../../components";
 
-export class ProductsTable extends React.Component {
+export class StocksInTable extends React.Component {
   state = {
-    products: [],
     searchText: "",
     searchedColumn: "",
+    stocksIn: [],
   };
 
   componentDidMount() {
-    const { retrieveProductsStart } = this.props;
+    const { retrieveStockInsStart } = this.props;
 
-    retrieveProductsStart();
+    retrieveStockInsStart();
   }
 
   componentDidUpdate(previousProps) {
-    const { deleteProductRestart, error, isSuccessful } = this.props;
+    const { deleteStockInRestart, error, isSuccessful } = this.props;
 
-    if (this.props.products !== previousProps.products) {
+    if (this.props.stocksIn !== previousProps.stocksIn) {
       this.setState({
-        products: this.props.products,
+        stocksIn: this.props.stocksIn,
       });
     }
 
     if (isSuccessful) {
-      deleteProductRestart();
+      deleteStockInRestart();
       this.openNotificationSuccess();
     }
 
@@ -67,7 +67,7 @@ export class ProductsTable extends React.Component {
     notification.success({
       message: `Success!`,
       duration: 5,
-      description: "You have successfully managed a product data!",
+      description: "You have successfully managed a stock in data!",
       placement: "topRight",
     });
   };
@@ -82,22 +82,22 @@ export class ProductsTable extends React.Component {
   };
 
   updateData = (data) => {
-    const { setIsEdit, setProduct, setVisible } = this.props;
+    const { setIsEdit, setStocksIn, setVisible } = this.props;
 
     setIsEdit(true);
-    setProduct(data);
+    setStocksIn(data);
     setVisible(true);
   };
 
   deleteData = (data) => {
-    const { deleteProductStart } = this.props;
+    const { deleteStockInStart } = this.props;
 
     fireAlertWithConfirmation(
-      `Are you sure you want to delete the selected product? This action can't be UNDONE!`,
-      "The selected product has been successfully deleted!",
+      `Are you sure you want to delete the selected stock in details? This action can't be UNDONE!`,
+      "The selected stock in details has been successfully deleted!",
       (confirmed) => {
         if (confirmed) {
-          deleteProductStart(data);
+          deleteStockInStart(data);
         } else {
           return false;
         }
@@ -200,39 +200,21 @@ export class ProductsTable extends React.Component {
   };
 
   render() {
-    const { products } = this.state;
+    const { stocksIn } = this.state;
     const { isActionLoading, isLoading } = this.props;
 
     const columns = [
       {
         title: "Product Name",
-        dataIndex: "name",
-        key: "name",
-        ...this.getColumnSearchProps("name"),
+        dataIndex: "selectedProduct",
+        key: "selectedProduct",
+        ...this.getColumnSearchProps("selectedProduct"),
       },
       {
-        title: "Size/Color",
-        dataIndex: "sizeColor",
-        key: "sizeColor",
-        ...this.getColumnSearchProps("sizeColor"),
-      },
-      {
-        title: "Stock Number",
-        dataIndex: "stockNumber",
-        key: "stockNumber",
-        ...this.getColumnSearchProps("stockNumber"),
-      },
-      {
-        title: "Current Cost per Unit",
-        dataIndex: "currentCost",
-        key: "currentCost",
-        ...this.getColumnSearchProps("currentCost"),
-      },
-      {
-        title: "Selling Price",
-        dataIndex: "sellingPrice",
-        key: "sellingPrice",
-        ...this.getColumnSearchProps("sellingPrice"),
+        title: "Date",
+        dataIndex: "date",
+        key: "date",
+        ...this.getColumnSearchProps("date"),
       },
       {
         title: "Quantity",
@@ -272,7 +254,7 @@ export class ProductsTable extends React.Component {
           ) : (
             <Table
               columns={columns}
-              dataSource={products && products}
+              dataSource={stocksIn && stocksIn}
               pagination={{ defaultPageSize: 7 }}
             />
           )}
@@ -287,13 +269,13 @@ const mapStateToProps = createStructuredSelector({
   isActionLoading: selectIsActionLoading,
   isLoading: selectIsLoading,
   isSuccessful: selectIsSuccessful,
-  products: selectAllProducts,
+  stocksIn: selectAllStockIns,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  deleteProductRestart: () => dispatch(deleteProductRestart()),
-  deleteProductStart: (data) => dispatch(deleteProductStart(data)),
-  retrieveProductsStart: () => dispatch(retrieveProductsStart()),
+  deleteStockInRestart: () => dispatch(deleteStockInRestart()),
+  deleteStockInStart: (data) => dispatch(deleteStockInStart(data)),
+  retrieveStockInsStart: () => dispatch(retrieveStockInsStart()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(StocksInTable);

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
 import {
   AddButton,
   ContentContainer,
@@ -7,8 +8,13 @@ import {
 } from "./StocksIn.styles";
 import StocksInModal from "./components/Modal";
 import StocksInTable from "./components/Table";
+import { retrieveProductsStart } from "../../../../redux/products/products.actions";
 
-const StocksIn = () => {
+const StocksIn = ({ retrieveProductsStart }) => {
+  useEffect(() => {
+    retrieveProductsStart();
+  }, [retrieveProductsStart]);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [stocksIn, setStocksIn] = useState();
@@ -41,4 +47,8 @@ const StocksIn = () => {
   );
 };
 
-export default StocksIn;
+const mapDispatchToProps = (dispatch) => ({
+  retrieveProductsStart: () => dispatch(retrieveProductsStart()),
+});
+
+export default connect(null, mapDispatchToProps)(StocksIn);
