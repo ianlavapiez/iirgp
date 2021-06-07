@@ -14,20 +14,21 @@ import {
 } from "./stocks-out.actions";
 
 function* addStockOut({
-  payload: { currentCost, name, sellingPrice, sizeColor, stockNumber },
+  payload: { customer, date, name, month, productKey, quantity, year },
 }) {
   try {
     const id = uuidv4();
     const reference = yield firestore.collection("stocksOut").doc(id);
 
     yield reference.set({
-      currentCost,
-      id,
+      customer,
+      date,
       name,
-      quantity: 0,
-      sellingPrice,
-      sizeColor,
-      stockNumber,
+      id,
+      month,
+      productKey,
+      quantity,
+      year,
     });
 
     yield retrieveStockOuts();
@@ -76,18 +77,20 @@ function* retrieveStockOuts() {
 }
 
 function* updateStockOut({
-  payload: { currentCost, id, name, sellingPrice, sizeColor, stockNumber },
+  payload: { customer, date, name, id, month, productKey, quantity, year },
 }) {
   try {
     const reference = yield firestore.collection("stocksOut").doc(id);
 
     yield reference.update({
-      currentCost,
-      id,
+      customer,
+      date,
       name,
-      sellingPrice,
-      sizeColor,
-      stockNumber,
+      id,
+      month,
+      productKey,
+      quantity,
+      year,
     });
     yield retrieveStockOuts();
     yield put(updateStockOutSuccess());

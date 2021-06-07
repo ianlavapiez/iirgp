@@ -20,6 +20,7 @@ import {
 import Customers from "./components/customers/Customers";
 import Products from "./components/products/Products";
 import StocksIn from "./components/stocks-in/StocksIn";
+import StocksOut from "./components/stocks-out/StocksOut";
 
 const { Sider } = Layout;
 
@@ -140,6 +141,7 @@ const AdminPage = ({ history, user }) => {
         {selectedKey === "customers" ? <Customers /> : null}
         {selectedKey === "products" ? <Products /> : null}
         {selectedKey === "stocksIn" ? <StocksIn /> : null}
+        {selectedKey === "stocksOut" ? <StocksOut /> : null}
       </Layout>
     </LayoutContainer>
   );

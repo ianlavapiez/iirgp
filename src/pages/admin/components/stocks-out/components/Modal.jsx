@@ -9,35 +9,38 @@ import Input from "antd/es/input";
 import Modal from "antd/es/modal";
 import Select from "antd/es/select";
 import {
-  addStockInRestart,
-  addStockInStart,
-  updateStockInRestart,
-  updateStockInStart,
-} from "../../../../../redux/stocks-in/stocks-in.actions";
+  addStockOutRestart,
+  addStockOutStart,
+  updateStockOutRestart,
+  updateStockOutStart,
+} from "../../../../../redux/stocks-out/stocks-out.actions";
 import {
   selectIsActionLoading,
   selectIsSuccessful,
-} from "../../../../../redux/stocks-in/stocks-in.selectors";
+} from "../../../../../redux/stocks-out/stocks-out.selectors";
+import { selectAllCustomers } from "../../../../../redux/customers/customers.selectors";
 import { selectAllProducts } from "../../../../../redux/products/products.selectors";
 import { fireAlert } from "../../../../../components";
 
 const { Option } = Select;
 
-const StocksInModal = ({
-  addStockInRestart,
-  addStockInStart,
+const StocksOutModal = ({
+  addStockOutRestart,
+  addStockOutStart,
+  customers,
   error,
   isActionLoading,
   isEdit,
   isSuccessful,
   products,
-  stocksIn,
-  updateStockInRestart,
-  updateStockInStart,
+  stocksOut,
+  updateStockOutRestart,
+  updateStockOutStart,
   visible,
   setIsEdit,
   setVisible,
 }) => {
+  const [customer, setCustomer] = useState("");
   const [date, setDate] = useState("");
   const [month, setMonth] = useState("");
   const [productDetails, setProductDetails] = useState();
@@ -54,20 +57,22 @@ const StocksInModal = ({
     }
 
     if (!isEdit) {
-      addStockInStart({
+      addStockOutStart({
+        customer,
         date,
-        month,
         name,
+        month,
         productKey: key,
         quantity,
         year,
       });
     } else {
-      updateStockInStart({
+      updateStockOutStart({
+        customer,
         date,
+        name,
         id,
         month,
-        name,
         productKey: key,
         quantity,
         year,
@@ -84,8 +89,8 @@ const StocksInModal = ({
     if (isSuccessful) {
       setVisible(false);
       setIsEdit(false);
-      addStockInRestart();
-      return updateStockInRestart();
+      addStockOutRestart();
+      return updateStockOutRestart();
     } else {
       if (error !== null) {
         setVisible(false);
@@ -93,10 +98,10 @@ const StocksInModal = ({
       }
     }
   }, [
-    addStockInRestart,
+    addStockOutRestart,
     error,
     isSuccessful,
-    updateStockInRestart,
+    updateStockOutRestart,
     setIsEdit,
     setVisible,
   ]);
@@ -106,6 +111,7 @@ const StocksInModal = ({
     wrapperCol: { span: 24 },
   };
 
+  const onCustomerChange = (value) => setCustomer(value);
   const onDateChange = (value, dateString) => {
     setYear(moment(value).year().toString());
     setMonth(moment(value).month().toString());
@@ -114,11 +120,11 @@ const StocksInModal = ({
   const onProductChange = (value) => setSelectedProduct(value);
 
   useEffect(() => {
-    if (stocksIn) {
-      setYear(moment(stocksIn.date).year().toString());
-      setMonth(moment(stocksIn.date).month().toString());
+    if (stocksOut) {
+      setYear(moment(stocksOut.date).year().toString());
+      setMonth(moment(stocksOut.date).month().toString());
     }
-  }, [stocksIn]);
+  }, [stocksOut]);
 
   useEffect(() => {
     setProductDetails(
@@ -138,7 +144,7 @@ const StocksInModal = ({
         <Input
           type="hidden"
           readOnly
-          value={isEdit ? stocksIn.id : ""}
+          value={isEdit ? stocksOut.id : ""}
           name="id"
           className="id"
         />
@@ -151,12 +157,31 @@ const StocksInModal = ({
               message: "Please select product!",
             },
           ]}
-          initialValue={isEdit ? stocksIn.selectedProduct : ""}
+          initialValue={isEdit ? stocksOut.name : ""}
         >
           <Select placeholder="Select a product" onChange={onProductChange}>
             {products.map((product) => (
-              <Option key={product.id} value={product.name}>
+              <Option key={product.id} value={product.id}>
                 {product.name}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item
+          label="Customer"
+          name="customer"
+          rules={[
+            {
+              required: true,
+              message: "Please select customer!",
+            },
+          ]}
+          initialValue={isEdit ? stocksOut.customer : ""}
+        >
+          <Select placeholder="Select a customer" onChange={onCustomerChange}>
+            {customers.map((customer) => (
+              <Option key={customer.id} value={customer.fullName}>
+                {customer.fullName}
               </Option>
             ))}
           </Select>
@@ -170,7 +195,7 @@ const StocksInModal = ({
               message: "Please input date!",
             },
           ]}
-          initialValue={isEdit ? moment(stocksIn.date) : ""}
+          initialValue={isEdit ? moment(stocksOut.date) : ""}
         >
           <DatePicker style={{ width: "100%" }} onChange={onDateChange} />
         </Form.Item>
@@ -183,7 +208,7 @@ const StocksInModal = ({
               message: "Please input quantity!",
             },
           ]}
-          initialValue={isEdit ? stocksIn.quantity : ""}
+          initialValue={isEdit ? stocksOut.quantity : ""}
         >
           <Input type="number" />
         </Form.Item>
@@ -197,7 +222,7 @@ const StocksInModal = ({
             type="primary"
             htmlType="submit"
           >
-            {isEdit ? "Update Stock In" : "Add Stock In"}
+            {isEdit ? "Update Stock Out" : "Add Stock Out"}
           </Button>
         </Form.Item>
       </Form>
@@ -206,16 +231,17 @@ const StocksInModal = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+  customers: selectAllCustomers,
   isActionLoading: selectIsActionLoading,
   isSuccessful: selectIsSuccessful,
   products: selectAllProducts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addStockInRestart: () => dispatch(addStockInRestart()),
-  addStockInStart: (data) => dispatch(addStockInStart(data)),
-  updateStockInRestart: () => dispatch(updateStockInRestart()),
-  updateStockInStart: (data) => dispatch(updateStockInStart(data)),
+  addStockOutRestart: () => dispatch(addStockOutRestart()),
+  addStockOutStart: (data) => dispatch(addStockOutStart(data)),
+  updateStockOutRestart: () => dispatch(updateStockOutRestart()),
+  updateStockOutStart: (data) => dispatch(updateStockOutStart(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StocksInModal);
+export default connect(mapStateToProps, mapDispatchToProps)(StocksOutModal);
