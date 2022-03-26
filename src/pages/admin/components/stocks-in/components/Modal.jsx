@@ -124,6 +124,8 @@ const StocksInModal = ({
     setProductDetails(
       products.find((product) => product.id === selectedProduct)
     );
+
+    console.log(selectedProduct);
   }, [products, selectedProduct]);
 
   return (
@@ -155,7 +157,7 @@ const StocksInModal = ({
         >
           <Select placeholder="Select a product" onChange={onProductChange}>
             {products.map((product) => (
-              <Option key={product.id} value={product.name}>
+              <Option key={product.id} value={product.id}>
                 {product.name}
               </Option>
             ))}

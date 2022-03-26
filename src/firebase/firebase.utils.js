@@ -4,13 +4,13 @@ import "firebase/auth";
 import "firebase/storage";
 
 const config = {
-  apiKey: "AIzaSyDHuDxSdAjxRAfJ4ptl54AXIV_Jr-6zmCQ",
-  authDomain: "iirgp-87da1.firebaseapp.com",
-  projectId: "iirgp-87da1",
-  storageBucket: "iirgp-87da1.appspot.com",
-  messagingSenderId: "273626642450",
-  appId: "1:273626642450:web:9c2b9f5fcc4413d7fe00cb",
-  measurementId: "G-X6MJMEHM36",
+  apiKey: "AIzaSyBYcyXjkcfn78vMGy3poxDnfhRah9JRl_s",
+  authDomain: "iirgp-41fb4.firebaseapp.com",
+  projectId: "iirgp-41fb4",
+  storageBucket: "iirgp-41fb4.appspot.com",
+  messagingSenderId: "371996118238",
+  appId: "1:371996118238:web:6ef7b3181f6fb6c8de464f",
+  measurementId: "G-ZGYZ254PCF",
 };
 
 firebase.initializeApp(config);

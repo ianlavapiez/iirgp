@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
+import ReactToPrint from "react-to-print";
 import {
   AddButton,
   ContentContainer,
@@ -12,6 +13,8 @@ import { retrieveCustomersStart } from "../../../../redux/customers/customers.ac
 import { retrieveProductsStart } from "../../../../redux/products/products.actions";
 
 const StocksOut = ({ retrieveCustomersStart, retrieveProductsStart }) => {
+  const componentRef = useRef();
+
   useEffect(() => {
     retrieveCustomersStart();
     retrieveProductsStart();
@@ -25,13 +28,19 @@ const StocksOut = ({ retrieveCustomersStart, retrieveProductsStart }) => {
     <LayoutContainer>
       <ContentContainer>
         <StocksTitle level={2}>Manage Stock Out</StocksTitle>
-        <AddButton
-          htmlType="button"
-          onClick={() => setIsModalVisible(true)}
-          type="primary"
-        >
-          Stock Out
-        </AddButton>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <AddButton
+            htmlType="button"
+            onClick={() => setIsModalVisible(true)}
+            type="primary"
+          >
+            Stock Out
+          </AddButton>
+          <ReactToPrint
+            trigger={() => <AddButton>Print</AddButton>}
+            content={() => componentRef.current}
+          />
+        </div>
         <StocksOutModal
           stocksOut={stocksOut}
           isEdit={isEdit}
@@ -40,6 +49,7 @@ const StocksOut = ({ retrieveCustomersStart, retrieveProductsStart }) => {
           visible={isModalVisible}
         />
         <StocksOutTable
+          componentRef={componentRef}
           setStocksOut={setStocksOut}
           setIsEdit={setIsEdit}
           setVisible={setIsModalVisible}

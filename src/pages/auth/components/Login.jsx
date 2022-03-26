@@ -32,7 +32,6 @@ import IIRGPLogo from "../../../assets/main-logo.png";
 const Login = ({
   emailSignInStart,
   error,
-  idNumberSignInStart,
   history,
   isLoading,
   isSuccessful,

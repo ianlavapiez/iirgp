@@ -201,7 +201,7 @@ export class StocksOutTable extends React.Component {
 
   render() {
     const { stocksOut } = this.state;
-    const { isActionLoading, isLoading } = this.props;
+    const { componentRef, isActionLoading, isLoading } = this.props;
 
     const columns = [
       {
@@ -256,6 +256,7 @@ export class StocksOutTable extends React.Component {
               columns={columns}
               dataSource={stocksOut && stocksOut}
               pagination={{ defaultPageSize: 7 }}
+              ref={componentRef}
             />
           )}
         </Spin>

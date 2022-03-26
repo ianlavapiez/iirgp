@@ -201,14 +201,14 @@ export class StocksInTable extends React.Component {
 
   render() {
     const { stocksIn } = this.state;
-    const { isActionLoading, isLoading } = this.props;
+    const { componentRef, isActionLoading, isLoading } = this.props;
 
     const columns = [
       {
         title: "Product Name",
-        dataIndex: "selectedProduct",
-        key: "selectedProduct",
-        ...this.getColumnSearchProps("selectedProduct"),
+        dataIndex: "name",
+        key: "name",
+        ...this.getColumnSearchProps("name"),
       },
       {
         title: "Date",
@@ -256,6 +256,7 @@ export class StocksInTable extends React.Component {
               columns={columns}
               dataSource={stocksIn && stocksIn}
               pagination={{ defaultPageSize: 7 }}
+              ref={componentRef}
             />
           )}
         </Spin>

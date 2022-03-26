@@ -130,6 +130,8 @@ const StocksOutModal = ({
     setProductDetails(
       products.find((product) => product.id === selectedProduct)
     );
+
+    console.log(selectedProduct);
   }, [products, selectedProduct]);
 
   return (

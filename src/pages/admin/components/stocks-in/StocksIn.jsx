@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
+import ReactToPrint from "react-to-print";
 import {
   AddButton,
   ContentContainer,
@@ -11,6 +12,8 @@ import StocksInTable from "./components/Table";
 import { retrieveProductsStart } from "../../../../redux/products/products.actions";
 
 const StocksIn = ({ retrieveProductsStart }) => {
+  const componentRef = useRef();
+
   useEffect(() => {
     retrieveProductsStart();
   }, [retrieveProductsStart]);
@@ -23,13 +26,19 @@ const StocksIn = ({ retrieveProductsStart }) => {
     <LayoutContainer>
       <ContentContainer>
         <StocksTitle level={2}>Manage Stocks In</StocksTitle>
-        <AddButton
-          htmlType="button"
-          onClick={() => setIsModalVisible(true)}
-          type="primary"
-        >
-          Stock In
-        </AddButton>
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <AddButton
+            htmlType="button"
+            onClick={() => setIsModalVisible(true)}
+            type="primary"
+          >
+            Stock In
+          </AddButton>
+          <ReactToPrint
+            trigger={() => <AddButton>Print</AddButton>}
+            content={() => componentRef.current}
+          />
+        </div>
         <StocksInModal
           stocksIn={stocksIn}
           isEdit={isEdit}
@@ -38,6 +47,7 @@ const StocksIn = ({ retrieveProductsStart }) => {
           visible={isModalVisible}
         />
         <StocksInTable
+          componentRef={componentRef}
           setStocksIn={setStocksIn}
           setIsEdit={setIsEdit}
           setVisible={setIsModalVisible}

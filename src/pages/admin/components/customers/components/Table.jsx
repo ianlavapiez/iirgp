@@ -201,7 +201,7 @@ export class CustomerTable extends React.Component {
 
   render() {
     const { customers } = this.state;
-    const { isActionLoading, isLoading } = this.props;
+    const { componentRef, isActionLoading, isLoading } = this.props;
 
     const columns = [
       {
@@ -256,6 +256,7 @@ export class CustomerTable extends React.Component {
               columns={columns}
               dataSource={customers && customers}
               pagination={{ defaultPageSize: 7 }}
+              ref={componentRef}
             />
           )}
         </Spin>
