@@ -11,6 +11,8 @@ import {
   retrieveProductsSuccess,
   updateProductFailure,
   updateProductSuccess,
+  updateQuantityFailure,
+  updateQuantitySuccess,
 } from "./products.actions";
 
 function* addProduct({
@@ -96,6 +98,20 @@ function* updateProduct({
   }
 }
 
+function* updateQuantity({ payload: { id, quantity } }) {
+  try {
+    const reference = yield firestore.collection("products").doc(id);
+
+    yield reference.update({
+      id,
+      quantity,
+    });
+    yield put(updateQuantitySuccess());
+  } catch (error) {
+    yield put(updateQuantityFailure(error.message));
+  }
+}
+
 function* onAddProductStart() {
   yield takeLatest(ProductsActionsTypes.ADD_PRODUCT_START, addProduct);
 }
@@ -115,11 +131,16 @@ function* onUpdateProductStart() {
   yield takeLatest(ProductsActionsTypes.UPDATE_PRODUCT_START, updateProduct);
 }
 
+function* onUpdateQuantityStart() {
+  yield takeLatest(ProductsActionsTypes.UPDATE_QUANTITY_START, updateQuantity);
+}
+
 export function* productsSaga() {
   yield all([
     call(onAddProductStart),
     call(onDeleteProductStart),
     call(onRetrieveProductsStart),
     call(onUpdateProductStart),
+    call(onUpdateQuantityStart),
   ]);
 }

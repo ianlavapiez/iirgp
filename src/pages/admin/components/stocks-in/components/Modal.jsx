@@ -20,6 +20,7 @@ import {
 } from "../../../../../redux/stocks-in/stocks-in.selectors";
 import { selectAllProducts } from "../../../../../redux/products/products.selectors";
 import { fireAlert } from "../../../../../components";
+import { updateQuantityStart } from "../../../../../redux/products/products.actions";
 
 const { Option } = Select;
 
@@ -34,11 +35,12 @@ const StocksInModal = ({
   stocksIn,
   updateStockInRestart,
   updateStockInStart,
+  updateQuantityStart,
   visible,
   setIsEdit,
   setVisible,
 }) => {
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(isEdit ? stocksIn.date : "");
   const [month, setMonth] = useState("");
   const [productDetails, setProductDetails] = useState();
   const [selectedProduct, setSelectedProduct] = useState([]);
@@ -46,7 +48,7 @@ const StocksInModal = ({
 
   const onFinish = (values) => {
     const { quantity } = values;
-    const { name, key } = productDetails;
+    const { name, key, quantity: productQuantity } = productDetails;
     const id = document.querySelector(".id").value;
 
     if (parseInt(quantity) <= 0) {
@@ -54,6 +56,8 @@ const StocksInModal = ({
     }
 
     if (!isEdit) {
+      const totalQuantity = +productQuantity + +quantity;
+
       addStockInStart({
         date,
         month,
@@ -62,16 +66,60 @@ const StocksInModal = ({
         quantity,
         year,
       });
-    } else {
-      updateStockInStart({
-        date,
-        id,
-        month,
-        name,
-        productKey: key,
-        quantity,
-        year,
+      updateQuantityStart({
+        id: key,
+        quantity: totalQuantity,
       });
+    } else {
+      if (parseInt(stocksIn.quantity) === parseInt(quantity)) {
+        updateStockInStart({
+          date,
+          id,
+          month,
+          name,
+          productKey: key,
+          quantity,
+          year,
+        });
+      } else if (parseInt(stocksIn.quantity) > parseInt(quantity)) {
+        const toBeAddedQuantity =
+          parseInt(stocksIn.quantity) - parseInt(quantity);
+        const storeQuantity = parseInt(productQuantity) - toBeAddedQuantity;
+
+        updateStockInStart({
+          date,
+          id,
+          month,
+          name,
+          productKey: key,
+          quantity,
+          year,
+        });
+
+        updateQuantityStart({
+          id: key,
+          quantity: storeQuantity,
+        });
+      } else {
+        const toBeAddedQuantity =
+          parseInt(quantity) - parseInt(stocksIn.quantity);
+        const storeQuantity = parseInt(productQuantity) + toBeAddedQuantity;
+
+        updateStockInStart({
+          date,
+          id,
+          month,
+          name,
+          productKey: key,
+          quantity,
+          year,
+        });
+
+        updateQuantityStart({
+          id: key,
+          quantity: storeQuantity,
+        });
+      }
     }
   };
 
@@ -101,6 +149,16 @@ const StocksInModal = ({
     setVisible,
   ]);
 
+  useEffect(() => {
+    if (isEdit) {
+      if (stocksIn.date) {
+        setDate(stocksIn.date);
+        setYear(moment(stocksIn.date).year().toString());
+        setMonth(moment(stocksIn.date).month().toString());
+      }
+    }
+  }, [isEdit, stocksIn]);
+
   const layout = {
     labelCol: { span: 24 },
     wrapperCol: { span: 24 },
@@ -124,8 +182,6 @@ const StocksInModal = ({
     setProductDetails(
       products.find((product) => product.id === selectedProduct)
     );
-
-    console.log(selectedProduct);
   }, [products, selectedProduct]);
 
   return (
@@ -218,6 +274,7 @@ const mapDispatchToProps = (dispatch) => ({
   addStockInStart: (data) => dispatch(addStockInStart(data)),
   updateStockInRestart: () => dispatch(updateStockInRestart()),
   updateStockInStart: (data) => dispatch(updateStockInStart(data)),
+  updateQuantityStart: (data) => dispatch(updateQuantityStart(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StocksInModal);

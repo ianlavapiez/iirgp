@@ -19,6 +19,7 @@ const productsReducer = (state = INITIAL_STATE, action) => {
     case ProductsActionsTypes.ADD_PRODUCT_START:
     case ProductsActionsTypes.DELETE_PRODUCT_START:
     case ProductsActionsTypes.UPDATE_PRODUCT_START:
+    case ProductsActionsTypes.UPDATE_QUANTITY_START:
       return {
         ...state,
         error: null,
@@ -35,6 +36,7 @@ const productsReducer = (state = INITIAL_STATE, action) => {
     case ProductsActionsTypes.ADD_PRODUCT_SUCCESS:
     case ProductsActionsTypes.DELETE_PRODUCT_SUCCESS:
     case ProductsActionsTypes.UPDATE_PRODUCT_SUCCESS:
+    case ProductsActionsTypes.UPDATE_QUANTITY_SUCCESS:
       return {
         ...state,
         actionLoading: false,

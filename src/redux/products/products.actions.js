@@ -67,3 +67,17 @@ export const updateProductFailure = (error) => ({
 export const updateProductRestart = () => ({
   type: ProductsActionsTypes.UPDATE_PRODUCT_RESTART,
 });
+
+export const updateQuantityStart = (data) => ({
+  type: ProductsActionsTypes.UPDATE_QUANTITY_START,
+  payload: data,
+});
+
+export const updateQuantitySuccess = () => ({
+  type: ProductsActionsTypes.UPDATE_QUANTITY_SUCCESS,
+});
+
+export const updateQuantityFailure = (error) => ({
+  type: ProductsActionsTypes.UPDATE_QUANTITY_FAILURE,
+  payload: error,
+});

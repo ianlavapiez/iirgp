@@ -21,6 +21,7 @@ import {
 import { selectAllCustomers } from "../../../../../redux/customers/customers.selectors";
 import { selectAllProducts } from "../../../../../redux/products/products.selectors";
 import { fireAlert } from "../../../../../components";
+import { updateQuantityStart } from "../../../../../redux/products/products.actions";
 
 const { Option } = Select;
 
@@ -34,6 +35,7 @@ const StocksOutModal = ({
   isSuccessful,
   products,
   stocksOut,
+  updateQuantityStart,
   updateStockOutRestart,
   updateStockOutStart,
   visible,
@@ -41,22 +43,33 @@ const StocksOutModal = ({
   setVisible,
 }) => {
   const [customer, setCustomer] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(isEdit ? stocksOut.date : "");
   const [month, setMonth] = useState("");
   const [productDetails, setProductDetails] = useState();
   const [selectedProduct, setSelectedProduct] = useState([]);
   const [year, setYear] = useState("");
 
+  console.log(date);
+
   const onFinish = (values) => {
     const { quantity } = values;
-    const { name, key } = productDetails;
+    const { name, key, quantity: productQuantity } = productDetails;
     const id = document.querySelector(".id").value;
 
     if (parseInt(quantity) <= 0) {
       return fireAlert("Quantity should not be 0.", "warning");
     }
 
+    if (quantity > parseInt(productQuantity)) {
+      return fireAlert(
+        `Quantity must not be greater than the current item's quantity. Current item left ${productQuantity} pcs.`,
+        "warning"
+      );
+    }
+
     if (!isEdit) {
+      const totalQuantity = +productQuantity - +quantity;
+
       addStockOutStart({
         customer,
         date,
@@ -66,17 +79,64 @@ const StocksOutModal = ({
         quantity,
         year,
       });
-    } else {
-      updateStockOutStart({
-        customer,
-        date,
-        name,
-        id,
-        month,
-        productKey: key,
-        quantity,
-        year,
+
+      updateQuantityStart({
+        id: key,
+        quantity: totalQuantity,
       });
+    } else {
+      if (parseInt(stocksOut.quantity) === parseInt(quantity)) {
+        updateStockOutStart({
+          customer,
+          date,
+          name,
+          id,
+          month,
+          productKey: key,
+          quantity,
+          year,
+        });
+      } else if (parseInt(stocksOut.quantity) > parseInt(quantity)) {
+        const toBeLessenQuantity =
+          parseInt(stocksOut.quantity) - parseInt(quantity);
+        const storeQuantity = parseInt(productQuantity) + toBeLessenQuantity;
+
+        updateStockOutStart({
+          customer,
+          date,
+          name,
+          id,
+          month,
+          productKey: key,
+          quantity,
+          year,
+        });
+
+        updateQuantityStart({
+          id: key,
+          quantity: storeQuantity,
+        });
+      } else {
+        const toBeAddedQuantity =
+          parseInt(quantity) - parseInt(stocksOut.quantity);
+        const storeQuantity = parseInt(productQuantity) - toBeAddedQuantity;
+
+        updateStockOutStart({
+          customer,
+          date,
+          name,
+          id,
+          month,
+          productKey: key,
+          quantity,
+          year,
+        });
+
+        updateQuantityStart({
+          id: key,
+          quantity: storeQuantity,
+        });
+      }
     }
   };
 
@@ -120,18 +180,19 @@ const StocksOutModal = ({
   const onProductChange = (value) => setSelectedProduct(value);
 
   useEffect(() => {
-    if (stocksOut) {
-      setYear(moment(stocksOut.date).year().toString());
-      setMonth(moment(stocksOut.date).month().toString());
+    if (isEdit) {
+      if (stocksOut.date) {
+        setDate(stocksOut.date);
+        setYear(moment(stocksOut.date).year().toString());
+        setMonth(moment(stocksOut.date).month().toString());
+      }
     }
-  }, [stocksOut]);
+  }, [isEdit, stocksOut]);
 
   useEffect(() => {
     setProductDetails(
       products.find((product) => product.id === selectedProduct)
     );
-
-    console.log(selectedProduct);
   }, [products, selectedProduct]);
 
   return (
@@ -159,7 +220,6 @@ const StocksOutModal = ({
               message: "Please select product!",
             },
           ]}
-          initialValue={isEdit ? stocksOut.name : ""}
         >
           <Select placeholder="Select a product" onChange={onProductChange}>
             {products.map((product) => (
@@ -244,6 +304,7 @@ const mapDispatchToProps = (dispatch) => ({
   addStockOutStart: (data) => dispatch(addStockOutStart(data)),
   updateStockOutRestart: () => dispatch(updateStockOutRestart()),
   updateStockOutStart: (data) => dispatch(updateStockOutStart(data)),
+  updateQuantityStart: (data) => dispatch(updateQuantityStart(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StocksOutModal);
